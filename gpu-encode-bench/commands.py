@@ -12,6 +12,7 @@ from bench_config import (
     AXIS_CQ23,
     CODEC_ENCODERS,
     CQ_VALUE,
+    FFMPEG_PATH,
     PRESET,
     bitrate_bufsize_mbps,
 )
@@ -67,7 +68,7 @@ def build_encode_command(
         bitrate = case["target_bitrate_mbps"]
         bufsize = bitrate_bufsize_mbps(bitrate)
         return [
-            "ffmpeg",
+            FFMPEG_PATH,
             "-benchmark",
             "-y",
             "-hwaccel",
@@ -95,7 +96,7 @@ def build_encode_command(
         ]
 
     return [
-        "ffmpeg",
+        FFMPEG_PATH,
         "-benchmark",
         "-y",
         "-hwaccel",
@@ -133,7 +134,7 @@ def build_vmaf_command(
         f"log_fmt=json:log_path={vmaf_json_path}:model=version=vmaf_v0.6.1"
     )
     return [
-        "ffmpeg",
+        FFMPEG_PATH,
         "-i",
         str(encoded_path),
         "-i",

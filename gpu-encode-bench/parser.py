@@ -10,6 +10,8 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+from bench_config import FFPROBE_PATH
+
 
 def parse_fraction(value: str | None) -> float | None:
     if not value or value == "0/0":
@@ -87,7 +89,7 @@ def parse_ffprobe_json(text: str) -> dict[str, Any]:
 
 def ffprobe_media(path: str | Path) -> tuple[dict[str, Any] | None, str | None]:
     command = [
-        "ffprobe",
+        FFPROBE_PATH,
         "-v",
         "error",
         "-select_streams",

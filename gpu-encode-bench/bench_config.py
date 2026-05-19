@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+FFMPEG_PATH = "ffmpeg"
+FFPROBE_PATH = "ffprobe"
+
 CODEC_ENCODERS = {
     "h264": "h264_nvenc",
     "hevc": "hevc_nvenc",

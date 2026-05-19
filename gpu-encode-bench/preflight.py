@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from bench_config import CODEC_ENCODERS, PRESET
+from bench_config import CODEC_ENCODERS, FFMPEG_PATH, FFPROBE_PATH, PRESET
 from parser import ffprobe_media, mb_from_bytes, safe_int
 
 
@@ -75,16 +75,16 @@ def collect_environment(
     env_dir.mkdir(parents=True, exist_ok=True)
     missing_tools = [
         name
-        for name in ("ffmpeg", "ffprobe", "nvidia-smi")
+        for name in (FFMPEG_PATH, FFPROBE_PATH, "nvidia-smi")
         if shutil.which(name) is None
     ]
 
-    ffmpeg_rc, ffmpeg_out, ffmpeg_err = run_capture(["ffmpeg", "-version"])
+    ffmpeg_rc, ffmpeg_out, ffmpeg_err = run_capture([FFMPEG_PATH, "-version"])
     ffmpeg_text = ffmpeg_out or ffmpeg_err
     write_text(env_dir / "ffmpeg_version.txt", ffmpeg_text)
 
     encoders_rc, encoders_out, encoders_err = run_capture(
-        ["ffmpeg", "-hide_banner", "-encoders"]
+        [FFMPEG_PATH, "-hide_banner", "-encoders"]
     )
     encoders_text = encoders_out or encoders_err
     write_text(env_dir / "ffmpeg_encoders.txt", encoders_text)
@@ -106,7 +106,7 @@ def collect_environment(
         preset_supported = False
         if available:
             _, help_out, help_err = run_capture(
-                ["ffmpeg", "-hide_banner", "-h", f"encoder={encoder}"]
+                [FFMPEG_PATH, "-hide_banner", "-h", f"encoder={encoder}"]
             )
             help_text = help_out or help_err
             write_text(env_dir / f"{encoder}_help.txt", help_text)
@@ -143,6 +143,8 @@ def collect_environment(
         "os_version": platform.platform(),
         "python_version": sys.version.replace("\n", " "),
         "missing_tools": missing_tools,
+        "ffmpeg_path": FFMPEG_PATH,
+        "ffprobe_path": FFPROBE_PATH,
         "ffmpeg_version": ffmpeg_version,
         "ffmpeg_build_config": ffmpeg_build_config,
         "ffmpeg_returncode": ffmpeg_rc,
@@ -172,6 +174,8 @@ def dry_run_environment(source_paths: dict[str, Path]) -> dict[str, Any]:
         "os_version": platform.platform(),
         "python_version": sys.version.replace("\n", " "),
         "missing_tools": [],
+        "ffmpeg_path": FFMPEG_PATH,
+        "ffprobe_path": FFPROBE_PATH,
         "ffmpeg_version": "",
         "ffmpeg_build_config": "",
         "primary_gpu": {
